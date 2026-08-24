@@ -1,0 +1,50 @@
+name: Reproducibility checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Validate pinned source and Python syntax
+        run: |
+          python -m py_compile scripts/*.py
+          python scripts/validate_sources.py
+
+      - name: Rebuild every chart
+        run: |
+          python scripts/build_chart.py
+          python scripts/build_reddit.py
+          python scripts/build_concentration.py
+          python scripts/build_leagues_and_owners.py
+
+      - name: Upload rebuilt charts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: rebuilt-charts
+          path: output/
+          if-no-files-found: error
+          retention-days: 7

@@ -6,9 +6,9 @@ actually matters for a number like this: **how much of it comes down to one
 person?**
 
 Every figure from the 2016–20 period is recomputed from 2,798 raw FEC
-contribution records at build time and printed to an audit table. Nothing here
-is estimated; where a figure could not be verified it is labeled as
-transcribed rather than computed.
+contribution records at build time and printed to an audit table. Published
+2021–24 dollar figures are transcribed; counterfactuals derived from The
+Guardian's rounded “at least $132.1M” total are labeled approximate.
 
 ![Political giving by U.S. pro-sports team owners](output/sports_owners_donations_chart.png)
 
@@ -27,7 +27,7 @@ and in one league by 31.
 | NBA | 66.8% R | 60.4% | −6.4 | Dan DeVos (16%) |
 | **WNBA** | **45.7% R** | **24.2%** | **−21.5** | Kelly Loeffler (28%) |
 | All owners, 2016–20 | 73.5% R | 65.3% | −8.1 | Charles Johnson (23%) |
-| All owners, 2021–24 | 94.5% R | 81.7% | −12.8 | Miriam Adelson (70%) |
+| All owners, 2021–24 | 94.5% R | ≈81.7% | ≈−12.8 | Miriam Adelson (≈70%) |
 
 Three things fall out of that table:
 
@@ -38,8 +38,8 @@ Three things fall out of that table:
 - **The WNBA is the only league whose owners gave more to Democratic-leaning
   recipients** — and it is *more* so than it first appears. Kelly Loeffler
   alone is 28% of WNBA owner money; without her the league is 24% R / 72% D.
-- **In 2021–24, one person is 70% of the entire dataset.** Miriam Adelson gave
-  $92.3M — 2.3× more than every other U.S. team owner combined.
+- **In 2021–24, one person is about 70% of the reported total.** Miriam Adelson gave
+  $92.3M — approximately 2.3× more than every other U.S. team owner combined.
 
 ## Charts
 
@@ -56,15 +56,16 @@ Two sources, kept separate because they are not the same kind of evidence.
 
 **2016 / 2018 / 2020 cycles — row-level, recomputed.** FiveThirtyEight's
 `sports-political-donations` dataset, compiled from Federal Election Commission
-records, via the [Kaggle mirror](https://www.kaggle.com/datasets/rahul253801/political-donations-by-american-sports-owners).
+records, pinned to [source commit `e0c8091`](https://github.com/fivethirtyeight/data/commit/e0c8091a3ba3be547b15a704b1ceb25b211e676b).
 2,798 contributions by 158 owners and commissioners across MLB, NBA, NFL, NHL,
 WNBA and NASCAR. Every figure recomputed from the rows at build time.
 
-**4 Nov 2020 – 16 Oct 2024 — published aggregates, transcribed.** The
+**4 Nov 2020 – 16 Oct 2024 — published figures and approximate derivations.** The
 Guardian's analysis of FEC filings, published 5 Nov 2024. No row-level file is
-published, so those figures are transcribed constants and are labeled as such
-on the chart. The Guardian notes its own totals are *"presumed to be a fraction
-of the actual contributions."*
+published. Exact published dollar figures are transcribed; calculations using
+the rounded “at least $132.1M” total are approximate and labeled accordingly.
+The Guardian notes its totals are *"presumed to be a fraction of the actual
+contributions."*
 
 The two periods use different compilers, party-lean rules and league sets, so
 they are shown as separate snapshots — **not** a continuous time series.
@@ -79,8 +80,9 @@ pip install -r requirements.txt
 python scripts/build_chart.py
 ```
 
-The dataset is pulled programmatically via `kagglehub` (no manual download),
-and each script prints a full audit table of every number it draws before
+The dataset is downloaded from that immutable commit and accepted only when its
+SHA-256, schema, row count, owner count, election years, and dollar total all
+match the audited contract. Each script prints a full audit table before
 writing the figure. The other three charts build the same way:
 
 ```bash
@@ -107,7 +109,7 @@ python scripts/build_leagues_and_owners.py
 
 ## Tools
 
-Python 3 · pandas · matplotlib · kagglehub
+Python 3 · pandas · matplotlib
 
 ## License
 

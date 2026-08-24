@@ -18,13 +18,13 @@ Prepared 2026-08-20.
 ## Simple citation
 
 > **Sources:** FiveThirtyEight's sports-owner political donations data (FEC
-> records, 2016/2018/2020 cycles) via the Kaggle mirror; and The Guardian's
+> records, 2016/2018/2020 cycles), pinned to its official source commit; and The Guardian's
 > analysis of FEC filings for 4 Nov 2020 – 16 Oct 2024.
 > **Tool:** Python (pandas + matplotlib).
 
 One-liner:
 
-> Sources: FiveThirtyEight sports-owner donations (FEC, 2016–20) via Kaggle; The Guardian analysis of FEC filings (2020–24) · Tool: Python (pandas, matplotlib)
+> Sources: FiveThirtyEight sports-owner donations (FEC, 2016–20), pinned source; The Guardian analysis of FEC filings (2020–24) · Tool: Python (pandas, matplotlib)
 
 ## Sources
 
@@ -33,11 +33,12 @@ editorially separate** because they are not the same kind of evidence.
 
 ### A. 2016 / 2018 / 2020 cycles — row-level, recomputed
 
-- **Kaggle — "Political donations by American sports owners"** (user
-  *rahul253801*, v1), a mirror of **FiveThirtyEight's `sports-political-donations`
-  dataset**, compiled from Federal Election Commission records for
-  FiveThirtyEight's October 2020 reporting.
-  https://www.kaggle.com/datasets/rahul253801/political-donations-by-american-sports-owners
+- **FiveThirtyEight's official `sports-political-donations` dataset**, compiled
+  from Federal Election Commission records for its October 2020 reporting and
+  pinned to [commit `e0c8091`](https://github.com/fivethirtyeight/data/commit/e0c8091a3ba3be547b15a704b1ceb25b211e676b).
+- The build requires SHA-256 `d6602d20049b8d36a1b455135bc4fc5900a2327dbe0f46d7633e2aad3222aca0`
+  and validates the schema, 2,798 rows, 158 owners, 2016/2018/2020 cycles, and
+  $46,978,697 total before analysis.
 - **2,798 contributions** by **158 owners and commissioners** across MLB, NBA,
   NFL, NHL, WNBA and NASCAR, each tagged with the recipient committee's party
   lean as classified by FiveThirtyEight.
@@ -51,19 +52,21 @@ editorially separate** because they are not the same kind of evidence.
   MLB, NFL, NBA, NHL, MLS, NWSL and WNBA teams from 4 Nov 2020 through the
   16 Oct 2024 filing deadline. Read via syndication:
   https://onefootball.com/en/news/us-sports-owners-make-huge-political-donations-which-party-does-your-teams-give-to-40268249
-- Published figures used: **$124,806,435 (94.5%)** to Republican-leaning
+- Published figures used: **at least $132.1M total**, **$124,806,435 (94.5%)** to Republican-leaning
   recipients, **$5,215,693 (3.9%)** to Democratic-leaning, ~2% bipartisan or
   unaffiliated; **Miriam Adelson $92,275,100**.
-- **No row-level file is published**, so these are **transcribed constants, not
-  recomputed.** The chart labels them as such.
+- **No row-level file is published.** Dollar figures are transcribed, while
+  totals and “without Adelson” values derived from the rounded $132.1M
+  denominator are approximate and labeled that way.
 - Corroborating context (not used for the plotted figures):
   [OpenSecrets, Oct 2025](https://www.opensecrets.org/news/2025/10/blitzing-washington-how-the-nfl-and-team-owners-spend-millions-to-influence-government/) ·
   [Front Office Sports, 2024](https://frontofficesports.com/nfl-mlb-nba-owners-2024-election-trump-harris/)
 
 ## Tools
 
-- **Python 3.12** — `pandas` (cleaning, aggregation, Lorenz construction),
-  `kagglehub` (dataset download), `matplotlib` (Agg backend; figure hand-laid
+- **Python 3.12** — Python's standard library (pinned download and integrity
+  checks), `pandas` (cleaning, aggregation, Lorenz construction),
+  `matplotlib` (Agg backend; figure hand-laid
   in inch coordinates).
 - Output: PNG at 200 dpi and SVG from one script, which prints an **audit
   table** of every number drawn on the chart.
@@ -101,10 +104,10 @@ absolute totals are printed to the right of each bar.
 | Period | All owners | Minus top donor | Shift |
 |---|---|---|---|
 | 2016–20 | 73.5% R / 21.6% D | 65.3% R / 28.2% D | **−8.1 pts** |
-| 2021–24 | 94.5% R / 3.9% D | 81.7% R / 13.1% D | **−12.8 pts** |
+| 2021–24 | 94.5% R / 3.9% D | ≈81.7% R / ≈13.1% D | **≈−12.8 pts** |
 
 Removed donors: **Charles Johnson** (Giants, $11,035,700 = 23.5% of the
-2016–20 total) and **Miriam Adelson** (Mavericks, $92,275,100 = 69.9% of the
+2016–20 total) and **Miriam Adelson** (Mavericks, $92,275,100 = ≈69.9% of the
 2021–24 total).
 
 **Plotted chart version** (`output/sports_owners_donations_chart.png` / `.svg`, built by
@@ -164,6 +167,9 @@ median one.
 - **Source B is not independently verified at row level.** The Guardian's
   aggregates are transcribed as published. The Guardian itself notes its
   totals are "presumed to be a fraction of the actual contributions."
+- **Source B calculations are approximate.** The published total is “at least
+  $132.1M”; derived shares, the amount attributed to all other owners, and the
+  counterfactual without Adelson use that rounded lower-bound denominator.
 - **"Minus Adelson" assumes her giving is ~entirely Republican-leaning.** This
   is consistent with the reporting but is an assumption, not a computed split,
   and is disclosed on the chart.

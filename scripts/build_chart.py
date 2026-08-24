@@ -9,8 +9,8 @@ Two panels sharing one row axis (leagues, plus period totals):
          (open dot), connected. Shows how much of each league's lean rests on
          one person.
 
-Sources: FiveThirtyEight `sports-political-donations` (FEC, 2016/2018/2020) via
-Kaggle, row-level and recomputed at build time; The Guardian's analysis of FEC
+Sources: FiveThirtyEight `sports-political-donations` (FEC, 2016/2018/2020),
+pinned to its official source commit and recomputed at build time; The Guardian's analysis of FEC
 filings for 4 Nov 2020 - 16 Oct 2024, published aggregates (2021-24 row only).
 
 Outputs output/sports_owners_donations_chart.png / .svg
@@ -18,9 +18,15 @@ Outputs output/sports_owners_donations_chart.png / .svg
 
 import os
 
-import kagglehub
-import pandas as pd
 import matplotlib
+
+from data_sources import (
+    GUARDIAN_ADELSON,
+    GUARDIAN_DEMOCRATIC,
+    GUARDIAN_REPUBLICAN,
+    GUARDIAN_TOTAL_APPROX,
+    load_fivethirtyeight_dataframe,
+)
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -48,9 +54,7 @@ plt.rcParams.update({
 })
 
 # ------------------------------------------------------------------ data ---
-path = kagglehub.dataset_download("rahul253801/political-donations-by-american-sports-owners")
-df = pd.read_csv(f"{path}/sports-political-donations.csv")
-df["amt"] = df["Amount"].astype(str).str.replace(r"[$,\s]", "", regex=True).astype(float)
+df = load_fivethirtyeight_dataframe()
 BUCKET = {"Republican": "R", "Bipartisan, but mostly Republican": "R",
           "Democrat": "D", "Bipartisan, but mostly Democratic": "D",
           "Bipartisan": "N", "Independent": "N"}
@@ -82,10 +86,10 @@ _, r2, _, _ = comp(df[df.Owner != TOP_ALL])
 rows.append(dict(label="All owners, 2016–20", total=t, R=r, N=n, D=d, R_ex=r2,
                  top=TOP_ALL, top_share=100 * TOP_AMT / t, kind="total"))
 
-G_R, G_D, G_ADELSON = 124_806_435, 5_215_693, 92_275_100
-G_TOT = G_R / 0.945
+G_R, G_D, G_ADELSON = GUARDIAN_REPUBLICAN, GUARDIAN_DEMOCRATIC, GUARDIAN_ADELSON
+G_TOT = GUARDIAN_TOTAL_APPROX
 G_N = G_TOT - G_R - G_D
-rows.append(dict(label="All owners, 2021–24", total=G_TOT,
+rows.append(dict(label="All owners, 2021–24 (approx.)", total=G_TOT,
                  R=100 * G_R / G_TOT, N=100 * G_N / G_TOT, D=100 * G_D / G_TOT,
                  R_ex=100 * (G_R - G_ADELSON) / (G_TOT - G_ADELSON),
                  top="Miriam Adelson", top_share=100 * G_ADELSON / G_TOT,
@@ -200,8 +204,8 @@ fig.legend(handles=dot_handles, loc="lower left", bbox_to_anchor=(8.05 / FW, 1.2
            frameon=False, fontsize=10.5, ncol=2, handletextpad=0.5, columnspacing=2.0)
 
 fig.text(1.85 / FW, 1.02 / FH,
-         "Leagues and the 2016–20 row: FiveThirtyEight “sports-political-donations” (FEC records) via Kaggle — 2,798 contributions by 158 owners and commissioners, recomputed from the rows.\n"
-         "2021–24 row: The Guardian’s analysis of FEC filings, published 5 Nov 2024, covering 4 Nov 2020 – 16 Oct 2024; published aggregates, and its “without” value assumes Miriam Adelson’s\n"
+         "Leagues and the 2016–20 row: FiveThirtyEight “sports-political-donations” (FEC records), pinned to source commit e0c8091 — 2,798 contributions by 158 owners and commissioners.\n"
+         "2021–24 row: The Guardian’s analysis of FEC filings, published 5 Nov 2024, covering 4 Nov 2020 – 16 Oct 2024; the reported total is at least $132.1M, so derived values are approximate. “Without” assumes Miriam Adelson’s\n"
          "giving is ~entirely Republican-leaning. Party lean is the recipient committee’s, not the donor’s. Federal contributions only. Owners holding teams in more than one league count toward\n"
          "each, so league dollar totals overlap. The two periods use different compilers and are not a continuous series.   Python (pandas, matplotlib) · Drew Cecala, 2026",
          fontsize=8.4, color=MUTED, ha="left", va="top", linespacing=1.7)

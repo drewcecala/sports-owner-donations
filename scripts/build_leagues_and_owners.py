@@ -1,7 +1,7 @@
 """The owner's box leans red — sports-owner political donations graphic.
 
-Source: Kaggle dataset "Political donations by American sports owners"
-(rahul253801, v1) — FiveThirtyEight's tracker of federal contributions by
+Source: FiveThirtyEight's pinned `sports-political-donations` source file —
+its tracker of federal contributions by
 U.S. pro-sports owners and commissioners, 2016 / 2018 / 2020 cycles, with
 each recipient committee's party lean.
 
@@ -13,9 +13,9 @@ Outputs: output/sports_owners_political_donations.png / .svg
 
 import os
 
-import kagglehub
-import pandas as pd
 import matplotlib
+
+from data_sources import load_fivethirtyeight_dataframe
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -25,9 +25,7 @@ from matplotlib.path import Path
 
 # ---------------------------------------------------------------- data ----
 
-path = kagglehub.dataset_download("rahul253801/political-donations-by-american-sports-owners")
-df = pd.read_csv(f"{path}/sports-political-donations.csv")
-df["amt"] = df["Amount"].str.replace(r"[$,]", "", regex=True).astype(float)
+df = load_fivethirtyeight_dataframe()
 BUCKET = {"Republican": "R", "Bipartisan, but mostly Republican": "R",
           "Democrat": "D", "Bipartisan, but mostly Democratic": "D",
           "Bipartisan": "N", "Independent": "N"}
@@ -253,7 +251,7 @@ for i, (owner, r) in enumerate(own.iterrows()):
 y = y + 12 * B_PITCH + 0.28
 hline(ML, W - MR, y)
 foot = (
-    "Source: “Political donations by American sports owners” (Kaggle · rahul253801, v1) — FiveThirtyEight's compilation of FEC records: 2,798 contributions to federal candidates,\n"
+    "Source: FiveThirtyEight “sports-political-donations,” pinned to source commit e0c8091 — 2,798 FEC contributions to federal candidates,\n"
     "parties and PACs by 158 owners and commissioners in MLB, NBA, NFL, NHL, WNBA and NASCAR, 2016 / 2018 / 2020 cycles, with each recipient's party lean as classified by\n"
     "FiveThirtyEight. “Mostly Republican / mostly Democratic” bipartisan committees are folded into the respective party; $0.85M to committees with no party listed (largely Jerry\n"
     "Reinsdorf's $0.8M to three PACs) is counted as gray alongside bipartisan giving. League shares double-count owners who hold teams in more than one league."

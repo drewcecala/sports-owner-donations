@@ -7,14 +7,15 @@ Two sources, deliberately kept visually distinct because they are not the same
 kind of evidence:
 
   A. 2016 / 2018 / 2020 cycles — FiveThirtyEight's `sports-political-donations`
-     dataset (FEC records), via the Kaggle mirror. Row-level: 2,798 individual
+     dataset (FEC records), pinned to its official source commit. Row-level: 2,798 individual
      contributions by 158 owners and commissioners. Every figure drawn from this
      source is recomputed from the rows at build time and printed in the audit
      block below.
 
   B. 4 Nov 2020 - 16 Oct 2024 — The Guardian's analysis of FEC filings
      (published 5 Nov 2024). Published aggregates only; no row-level file is
-     available, so these figures are transcribed constants, not recomputed.
+     available. Published dollar figures are transcribed; calculations using
+     the rounded "at least $132.1M" total are explicitly approximate.
      They are labeled as such on the chart.
 
 Outputs PNG + SVG to output/ and prints a full audit table.
@@ -22,10 +23,16 @@ Outputs PNG + SVG to output/ and prints a full audit table.
 
 import os
 
-import kagglehub
 import numpy as np
-import pandas as pd
 import matplotlib
+
+from data_sources import (
+    GUARDIAN_ADELSON,
+    GUARDIAN_DEMOCRATIC,
+    GUARDIAN_REPUBLICAN,
+    GUARDIAN_TOTAL_APPROX,
+    load_fivethirtyeight_dataframe,
+)
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -50,9 +57,7 @@ plt.rcParams.update({
 })
 
 # ------------------------------------------------------------------ data ---
-path = kagglehub.dataset_download("rahul253801/political-donations-by-american-sports-owners")
-df = pd.read_csv(f"{path}/sports-political-donations.csv")
-df["amt"] = df["Amount"].astype(str).str.replace(r"[$,\s]", "", regex=True).astype(float)
+df = load_fivethirtyeight_dataframe()
 
 BUCKET = {"Republican": "R", "Bipartisan, but mostly Republican": "R",
           "Democrat": "D", "Bipartisan, but mostly Democratic": "D",
@@ -87,8 +92,8 @@ def cum_at(n):
 
 
 # --- Source B: Guardian published aggregates (transcribed, not recomputed) ---
-G_R, G_D, G_ADELSON = 124_806_435, 5_215_693, 92_275_100
-G_TOTAL = G_R / 0.945                       # Guardian states R = 94.5% of total
+G_R, G_D, G_ADELSON = GUARDIAN_REPUBLICAN, GUARDIAN_DEMOCRATIC, GUARDIAN_ADELSON
+G_TOTAL = GUARDIAN_TOTAL_APPROX             # reported as at least $132.1M
 G_N = G_TOTAL - G_R - G_D
 B_ALL = (G_TOTAL, 100 * G_R / G_TOTAL, 100 * G_D / G_TOTAL, 100 * G_N / G_TOTAL)
 _t = G_TOTAL - G_ADELSON                     # assumes Adelson's giving is ~all R
@@ -108,11 +113,11 @@ for n in (1, 3, 5, 10, 20, 50):
     print(f"      top {n:>2} donors ({100*n/N_OWNERS:4.1f}% of givers) = {cum_at(n):5.1f}% of dollars")
 print(f"      median donor ${owner_tot.median():,.0f} | mean ${owner_tot.mean():,.0f}")
 print(f"\n    top donor: {TOP_NAME} ${TOP_AMT:,.0f} = {100*TOP_AMT/TOTAL:.1f}% of all dollars")
-print(f"\n[B] Guardian / FEC, 4 Nov 2020 - 16 Oct 2024  (transcribed aggregates)")
-print(f"    all owners            R {B_ALL[1]:5.1f}%  D {B_ALL[2]:5.1f}%  N {B_ALL[3]:4.1f}%   ${B_ALL[0]:,.0f}")
-print(f"    excl. Miriam Adelson  R {B_EX[1]:5.1f}%  D {B_EX[2]:5.1f}%  N {B_EX[3]:4.1f}%   ${B_EX[0]:,.0f}")
-print(f"    -> removing 1 donor moves R share {B_ALL[1]-B_EX[1]:+.1f} pts")
-print(f"    Adelson ${G_ADELSON:,.0f} = {100*G_ADELSON/G_TOTAL:.1f}% of all dollars in window")
+print(f"\n[B] Guardian / FEC, 4 Nov 2020 - 16 Oct 2024  (published figures; derived values approximate)")
+print(f"    all owners            R ≈{B_ALL[1]:4.1f}%  D ≈{B_ALL[2]:4.1f}%  N ≈{B_ALL[3]:3.1f}%   ≈${B_ALL[0]:,.0f}")
+print(f"    excl. Miriam Adelson  R ≈{B_EX[1]:4.1f}%  D ≈{B_EX[2]:4.1f}%  N ≈{B_EX[3]:3.1f}%   ≈${B_EX[0]:,.0f}")
+print(f"    -> removing 1 donor moves R share ≈{B_ALL[1]-B_EX[1]:+.1f} pts")
+print(f"    Adelson ${G_ADELSON:,.0f} = ≈{100*G_ADELSON/G_TOTAL:.1f}% of the reported total")
 print("=" * 78)
 
 # ------------------------------------------------------------------ plot ---
@@ -204,6 +209,8 @@ rows = [
 BAR_H, GAP = 0.60, 0.34
 y, ypos = 0.0, []
 for label, (tot, r, d, n), is_ex in rows:
+    approximate = label.startswith("2021")
+    prefix = "≈" if approximate else ""
     left = 0.0
     for val, col in ((r, R_COL), (n, N_COL), (d, D_COL)):
         axB.barh(y, val, left=left, height=BAR_H, color=col,
@@ -213,12 +220,12 @@ for label, (tot, r, d, n), is_ex in rows:
     axB.text(-3, y, label, fontsize=11.8, ha="right", va="center",
              color=INK2 if is_ex else INK,
              fontweight="normal" if is_ex else "bold")
-    axB.text(r / 2, y, f"{r:.1f}%", fontsize=12.4, ha="center", va="center",
+    axB.text(r / 2, y, f"{prefix}{r:.1f}%", fontsize=12.4, ha="center", va="center",
              color="white", fontweight="bold", zorder=4)
     if d > 16:
-        axB.text(100 - d / 2, y, f"{d:.1f}%", fontsize=11.2, ha="center",
+        axB.text(100 - d / 2, y, f"{prefix}{d:.1f}%", fontsize=11.2, ha="center",
                  va="center", color="white", fontweight="bold", zorder=4)
-    axB.text(104, y, f"${tot/1e6:,.1f}M", fontsize=11.2, ha="left", va="center",
+    axB.text(104, y, f"{prefix}${tot/1e6:,.1f}M", fontsize=11.2, ha="left", va="center",
              color=MUTED)
     ypos.append(y)
     y -= BAR_H + GAP
@@ -229,14 +236,15 @@ for i in (0, 2):
     y0, y1 = ypos[i], ypos[i + 1]
     r0, r1 = rows[i][1][1], rows[i + 1][1][1]
     axB.plot([XB, XB + 2.2, XB + 2.2, XB], [y0, y0, y1, y1], lw=1.3, color=INK2, zorder=5)
-    axB.text(XB + 5.5, (y0 + y1) / 2, f"−{r0-r1:.1f} pts\nwithout\none donor",
+    prefix = "≈" if i == 0 else ""
+    axB.text(XB + 5.5, (y0 + y1) / 2, f"{prefix}−{r0-r1:.1f} pts\nwithout\none donor",
              fontsize=10.8, va="center", ha="left", color=INK, linespacing=1.5)
 
 axB.set_xlim(-42, 168)
 axB.set_ylim(y + 0.34, BAR_H)
 
 fig.text(BX / FW, (PANEL_Y - 0.34) / FH,
-         f"Miriam Adelson (Mavericks) alone accounts for {100*G_ADELSON/G_TOTAL:.0f}% of all owner money in 2021–24.\n"
+         f"Miriam Adelson (Mavericks) alone accounts for ≈{100*G_ADELSON/G_TOTAL:.0f}% of the reported owner total in 2021–24.\n"
          f"{TOP_NAME} (Giants) accounts for {100*TOP_AMT/TOTAL:.0f}% in 2016–20.",
          fontsize=10.8, color=INK2, ha="left", va="top", linespacing=1.6)
 
@@ -253,8 +261,8 @@ fig.legend(handles=handles, loc="lower left", bbox_to_anchor=(L, 0.181),
 fig.text(L, 0.151, "SOURCES · TOOLS · METHOD", fontsize=9.5, fontweight="bold",
          color=INK2, ha="left", va="top")
 fig.text(L, 0.129,
-         "2016–20  FiveThirtyEight “sports-political-donations” (FEC records), via Kaggle mirror rahul253801 v1 — 2,798 contributions by 158 owners; every figure recomputed from the rows at build time.\n"
-         "2021–24  The Guardian’s analysis of FEC filings, published 5 Nov 2024, covering 4 Nov 2020 – 16 Oct 2024 — published aggregates transcribed, not recomputed. The Guardian notes its totals are\n"
+         "2016–20  FiveThirtyEight “sports-political-donations” (FEC records), pinned to source commit e0c8091 — 2,798 contributions by 158 owners; every figure recomputed from the rows at build time.\n"
+         "2021–24  The Guardian’s analysis of FEC filings, published 5 Nov 2024, covering 4 Nov 2020 – 16 Oct 2024 — published figures; the reported total is at least $132.1M, so derived values are approximate. Totals are\n"
          "“presumed to be a fraction of the actual contributions.”  The two periods use different compilers and party-lean rules, so they are shown as separate snapshots, not a continuous series.\n"
          "METHOD  Party lean is each source’s classification of the recipient committee, not of the donor. “Minus Adelson” assumes her giving is ~entirely Republican-leaning. Federal contributions only —\n"
          "no state or local giving, and no undisclosed spending.   TOOLS  Python · pandas · matplotlib.   Chart: Drew Cecala, 2026.",

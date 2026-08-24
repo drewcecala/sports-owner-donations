@@ -4,7 +4,7 @@ Same verified numbers as `build_concentration.py`, rebuilt for a
 phone screen: 4:5 portrait, plain-language labels, no Lorenz curve (it is the
 main comprehension barrier for a general audience), and one idea per section.
 
-Lead finding: between the 2020 and 2024 elections, one owner gave 2.3x more to
+Lead finding: between the 2020 and 2024 elections, one owner gave about 2.3x more to
 federal politics than every other U.S. pro-sports team owner combined.
 
 Outputs output/sports_owners_donations_reddit.png (1200x1600).
@@ -12,9 +12,15 @@ Outputs output/sports_owners_donations_reddit.png (1200x1600).
 
 import os
 
-import kagglehub
-import pandas as pd
 import matplotlib
+
+from data_sources import (
+    GUARDIAN_ADELSON,
+    GUARDIAN_DEMOCRATIC,
+    GUARDIAN_REPUBLICAN,
+    GUARDIAN_TOTAL_APPROX,
+    load_fivethirtyeight_dataframe,
+)
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -40,9 +46,7 @@ plt.rcParams.update({
 })
 
 # ------------------------------------------------------------------ data ---
-path = kagglehub.dataset_download("rahul253801/political-donations-by-american-sports-owners")
-df = pd.read_csv(f"{path}/sports-political-donations.csv")
-df["amt"] = df["Amount"].astype(str).str.replace(r"[$,\s]", "", regex=True).astype(float)
+df = load_fivethirtyeight_dataframe()
 BUCKET = {"Republican": "R", "Bipartisan, but mostly Republican": "R",
           "Democrat": "D", "Bipartisan, but mostly Democratic": "D",
           "Bipartisan": "N", "Independent": "N"}
@@ -61,8 +65,8 @@ def split(frame):
 
 A_ALL, A_EX = split(df), split(df[df.Owner != TOP_NAME])
 
-G_R, G_D, G_ADELSON = 124_806_435, 5_215_693, 92_275_100
-G_TOTAL = G_R / 0.945
+G_R, G_D, G_ADELSON = GUARDIAN_REPUBLICAN, GUARDIAN_DEMOCRATIC, GUARDIAN_ADELSON
+G_TOTAL = GUARDIAN_TOTAL_APPROX
 G_OTHERS = G_TOTAL - G_ADELSON
 RATIO = G_ADELSON / G_OTHERS
 B_ALL = (G_TOTAL, 100 * G_R / G_TOTAL, 100 * G_D / G_TOTAL,
@@ -136,14 +140,14 @@ hero.set_ylim(-1.05, 1.05)
 for yy, val, money, who, col in [
     (0.45, 100.0, f"${G_ADELSON/1e6:.0f} million",
      "Miriam Adelson  ·  Dallas Mavericks", HERO),
-    (-0.55, 100 * G_OTHERS / G_ADELSON, f"${G_OTHERS/1e6:.0f} million",
+    (-0.55, 100 * G_OTHERS / G_ADELSON, f"≈${G_OTHERS/1e6:.0f} million",
      "Every other team owner, combined", N_COL),
 ]:
     hero.text(0, yy + 0.30, who, fontsize=12.5, ha="left", va="bottom", color=INK2)
     hero.barh(yy, val, height=0.46, color=col, zorder=3)
     hero.text(1.8, yy, money, fontsize=18, fontweight="bold",
               ha="left", va="center", color="white", zorder=4)
-hero.text(46, -0.55, f"{RATIO:.1f}× more than\neveryone else\nput together",
+hero.text(46, -0.55, f"≈{RATIO:.1f}× more than\neveryone else\nput together",
           fontsize=13, fontweight="bold", ha="left", va="center",
           color=INK, linespacing=1.5)
 
@@ -164,11 +168,11 @@ for yy, (tot, r, d, n), lab, ex in [(0.30, B_ALL, "All owners", False),
         left += val
     mini.text(0, yy + 0.28, lab, fontsize=11.5, ha="left", va="bottom",
               color=INK2 if ex else INK, fontweight="normal" if ex else "bold")
-    mini.text(r / 2, yy, f"{r:.0f}% Republican", fontsize=12.5, ha="center",
+    mini.text(r / 2, yy, f"≈{r:.0f}% Republican", fontsize=12.5, ha="center",
               va="center", color="white", fontweight="bold", zorder=4)
 mini.plot([102, 104.4, 104.4, 102], [0.30, 0.30, -0.85, -0.85],
           lw=1.4, color=INK2, zorder=5)
-mini.text(107, -0.28, f"−{B_ALL[1]-B_EX[1]:.0f}\npoints", fontsize=12.5,
+mini.text(107, -0.28, f"≈−{B_ALL[1]-B_EX[1]:.0f}\npoints", fontsize=12.5,
           fontweight="bold", va="center", ha="left", color=INK, linespacing=1.4)
 
 rule(5.30)
@@ -229,8 +233,8 @@ fig.text(L, fy(1.84),
 # ----------------------------------------------------------------- footer --
 fig.text(L, fy(1.30),
          "SOURCES  2021\u201324: The Guardian\u2019s analysis of FEC filings (pub. 5 Nov 2024), covering 4 Nov 2020 \u2013 16 Oct\n"
-         "2024; its totals are \u201cpresumed to be a fraction of the actual contributions.\u201d  2016\u201320 league panel:\n"
-         "FiveThirtyEight \u201csports-political-donations\u201d (FEC) via Kaggle \u2014 2,798 contributions by 158 owners.\n"
+         "2024; at least $132.1M total, so derived figures are approximate.  2016\u201320 league panel:\n"
+         "FiveThirtyEight \u201csports-political-donations\u201d (FEC), pinned to source commit e0c8091 \u2014 2,798 contributions by 158 owners.\n"
          "NOTES  Party lean is the recipient\u2019s, not the donor\u2019s. Federal donations only. Owners holding teams in\n"
          "more than one league count toward each, so league totals overlap. The two periods use different compilers\n"
          "and are not a continuous series.   TOOL  Python (pandas, matplotlib)   \u00b7   OC: Drew Cecala, 2026",
