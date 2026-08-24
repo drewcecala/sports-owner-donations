@@ -222,23 +222,23 @@ fig.legend(handles=handles, loc="lower left", bbox_to_anchor=(L, fy(2.24)),
            frameon=False, fontsize=12, ncol=3, handletextpad=0.5, columnspacing=1.6)
 
 fig.text(L, fy(2.08),
-         "The WNBA is the only league whose owners gave more to Democrats than Republicans.",
+         "Only WNBA owners gave more to Democrats than Republicans.",
          fontsize=11.5, color=INK, ha="left", va="top")
 
 fig.text(L, fy(1.84),
-         f"The one-donor effect shows up here too: the 2016\u201320 split was {A_ALL[1]:.0f}% Republican overall,\n"
-         f"but {A_EX[1]:.0f}% with the biggest single giver ({TOP_NAME}) taken out.",
+         f"The one-donor effect appears here too: {A_ALL[1]:.0f}% Republican overall in 2016\u201320,\n"
+         f"but {A_EX[1]:.0f}% after excluding the largest giver, {TOP_NAME}.",
          fontsize=11, color=INK2, ha="left", va="top", linespacing=1.6)
 
 # ----------------------------------------------------------------- footer --
 fig.text(L, fy(1.30),
-         "SOURCES  2021\u201324: The Guardian\u2019s analysis of FEC filings (pub. 5 Nov 2024), covering 4 Nov 2020 \u2013 16 Oct\n"
-         "2024; at least $132.1M total, so derived figures are approximate.  2016\u201320 league panel:\n"
-         "FiveThirtyEight \u201csports-political-donations\u201d (FEC), pinned to source commit e0c8091 \u2014 2,798 contributions by 158 owners.\n"
-         "NOTES  Party lean is the recipient\u2019s, not the donor\u2019s. Federal donations only. Owners holding teams in\n"
-         "more than one league count toward each, so league totals overlap. The two periods use different compilers\n"
-         "and are not a continuous series.   TOOL  Python (pandas, matplotlib)   \u00b7   OC: Drew Cecala, 2026",
-         fontsize=8.7, color=MUTED, ha="left", va="top", linespacing=1.55)
+         "SOURCES  2021\u201324: Guardian FEC analysis (5 Nov 2024), covering 4 Nov 2020 \u2013 16 Oct 2024;\n"
+         "at least $132.1M total, so derived figures are approximate.  2016\u201320: FiveThirtyEight\n"
+         "\u201csports-political-donations,\u201d pinned to e0c8091 \u2014 2,798 contributions by 158 owners.\n"
+         "NOTES  Party lean is the recipient\u2019s, not the donor\u2019s. Federal donations only. Multi-league\n"
+         "owners count toward each league, so totals overlap. The periods use different compilers and\n"
+         "are not a continuous series.   TOOL  Python (pandas, matplotlib) \u00b7 OC: Drew Cecala, 2026",
+         fontsize=8.5, color=MUTED, ha="left", va="top", linespacing=1.55)
 
 OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output", "sports_owners_donations_reddit")
 fig.savefig(f"{OUT}.png", dpi=160)
