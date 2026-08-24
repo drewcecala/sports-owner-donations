@@ -1,6 +1,6 @@
 """The megadonor effect — concentration in sports-owner political giving.
 
-A companion to `build_sports_owners_donations.py`. Where that chart asks *which
+A companion to `build_leagues_and_owners.py`. Where that chart asks *which
 way* sports-owner money leans, this one asks *how few people* decide the answer.
 
 Two sources, deliberately kept visually distinct because they are not the same
@@ -15,9 +15,9 @@ kind of evidence:
   B. 4 Nov 2020 - 16 Oct 2024 — The Guardian's analysis of FEC filings
      (published 5 Nov 2024). Published aggregates only; no row-level file is
      available, so these figures are transcribed constants, not recomputed.
-     They are labelled as such on the chart.
+     They are labeled as such on the chart.
 
-Outputs PNG + SVG to sports_owners_donations/ and prints a full audit table.
+Outputs PNG + SVG to output/ and prints a full audit table.
 """
 
 import os

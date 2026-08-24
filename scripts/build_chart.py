@@ -13,7 +13,7 @@ Sources: FiveThirtyEight `sports-political-donations` (FEC, 2016/2018/2020) via
 Kaggle, row-level and recomputed at build time; The Guardian's analysis of FEC
 filings for 4 Nov 2020 - 16 Oct 2024, published aggregates (2021-24 row only).
 
-Outputs sports_owners_donations/sports_owners_donations_chart.png / .svg
+Outputs output/sports_owners_donations_chart.png / .svg
 """
 
 import os

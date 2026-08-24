@@ -1,15 +1,19 @@
-# "A handful of people decide which way the owner's box leans" — sources, tools & methodology
+# Sources, tools & methodology
 
-Charts: `output/sports_owners_donation_concentration.png` / `.svg`
-(full landscape version) and `sports_owners_donations_reddit.png` (1200×1600 portrait,
-mobile/Reddit cut — same figures, plain-language labels, Lorenz curve replaced by a
-direct one-donor-vs-everyone-else comparison, plus the per-league breakdown)
-Build scripts: `scripts/build_concentration.py`, `scripts/build_reddit.py`
+Charts live in `output/`, each built by a script in `scripts/`:
+
+| Chart | Script |
+|---|---|
+| `sports_owners_donations_chart.png` / `.svg` | `build_chart.py` |
+| `sports_owners_donations_reddit.png` (1200×1600 portrait) | `build_reddit.py` |
+| `sports_owners_donation_concentration.png` / `.svg` | `build_concentration.py` |
+| `sports_owners_political_donations.png` / `.svg` | `build_leagues_and_owners.py` |
+
+The first three ask **how few people decide** which way sports-owner political
+money leans. The fourth — the original graphic, documented in the appendix —
+asks **which way** it leans.
+
 Prepared 2026-08-20.
-
-Companion to the appendix below.
-That chart asks **which way** sports-owner political money leans. This one asks
-**how few people decide the answer.**
 
 ## Simple citation
 
@@ -103,7 +107,7 @@ Removed donors: **Charles Johnson** (Giants, $11,035,700 = 23.5% of the
 2016–20 total) and **Miriam Adelson** (Mavericks, $92,275,100 = 69.9% of the
 2021–24 total).
 
-**Plotted chart version** (`sports_owners_donations_chart.png` / `.svg`, built by
+**Plotted chart version** (`output/sports_owners_donations_chart.png` / `.svg`, built by
 `scripts/build_chart.py`). The same data as a conventional
 two-panel figure on shared row axes rather than a designed graphic: left panel
 is the party composition stacked to 100% on a percentage axis; right panel is a
@@ -176,50 +180,14 @@ median one.
 
 # Appendix — the original league / top-owner graphic
 
+Chart: `output/sports_owners_political_donations.png` / `.svg`
+Build script: `scripts/build_leagues_and_owners.py` · Prepared 2026-08-18.
 
-Chart: `output/sports_owners_political_donations.png` / `.svg` · Build script: `scripts/build_leagues_and_owners.py`
-Prepared 2026-08-18.
+Same source, cleaning and party buckets as above. What differs is the layout,
+plus two details specific to this chart.
 
-## Simple citation
+**Neutral bucket, in detail.**
 
-> **Source:** FiveThirtyEight's sports-owner political donations data (FEC
-> records, 2016 / 2018 / 2020 cycles), via the Kaggle mirror "Political
-> donations by American sports owners" (user rahul253801).
-> **Tool:** Python (pandas + matplotlib).
-
-One-liner:
-
-> Source: FiveThirtyEight sports-owner donations (FEC, 2016–2020) via Kaggle · Tool: Python (pandas, matplotlib)
-
-## Sources
-
-- **Kaggle — "Political donations by American sports owners"** (user
-  *rahul253801*, v1): a mirror of **FiveThirtyEight's `sports-political-donations`
-  dataset**, compiled from Federal Election Commission records for
-  FiveThirtyEight's October 2020 reporting on sports-owner giving.
-  https://www.kaggle.com/datasets/rahul253801/political-donations-by-american-sports-owners
-- Contents: **2,798 federal contributions** by **158 owners and commissioners**
-  across **MLB, NBA, NFL, NHL, WNBA and NASCAR**, election cycles **2016, 2018
-  and 2020**, each tagged with the recipient committee's **party lean as
-  classified by FiveThirtyEight** (Republican / Democrat / Bipartisan /
-  "Bipartisan, but mostly …" / Independent).
-
-## Tools
-
-- **Python 3.12** — `pandas` (cleaning + aggregation), `kagglehub` (dataset
-  download), `matplotlib` (Agg backend; figure hand-laid in inch coordinates).
-- Output: PNG at 200 dpi and SVG from one script, which prints an **audit
-  table** of every total, share, and owner split drawn on the chart.
-- Palette: Republican red / Democratic blue / neutral gray — the red↔blue pair
-  checked with an OKLab-based validator for colorblind separation and contrast.
-
-## Methodology
-
-**Cleaning.** Dollar strings (`"$4,000 "`) stripped to numbers. Party labels
-folded into three buckets:
-
-- **Republican (red):** "Republican" + "Bipartisan, but mostly Republican"
-- **Democratic (blue):** "Democrat" + "Bipartisan, but mostly Democratic"
 - **Neutral (gray):** "Bipartisan" + "Independent" + rows with **no party
   listed** — 9 rows totaling **$848,950**, most of it Jerry Reinsdorf's $800K
   to three PACs (Govern or Go Home; United Together; United for Progress),
@@ -242,9 +210,6 @@ as stacked R / neutral / D bars with totals at the tip. Charles Johnson
 Couples listed jointly in FEC records (e.g. "Jimmy and Susan Haslam") are one
 entry; league commissioners are included as compiled by FiveThirtyEight.
 
-**Limitations.**
-- Federal contributions only — no state/local giving, no undisclosed money.
-- Party lean is FiveThirtyEight's classification of each recipient committee.
-- The 2020 cycle reflects the dataset's fall-2020 compilation date, so
-  late-2020 contributions are not included.
-- Percentages are rounded for display; the audit output carries full precision.
+**Additional limitation.** The 2020 cycle reflects the dataset's fall-2020
+compilation date, so late-2020 contributions are not included. All other
+limitations listed above apply here too.

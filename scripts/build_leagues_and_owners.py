@@ -8,7 +8,7 @@ each recipient committee's party lean.
 Buckets: R = Republican + "mostly Republican"; D = Democrat + "mostly
 Democratic"; N = bipartisan + independent + no party listed ($0.85M).
 
-Outputs: sports_owners_political_donations.png / .svg at the repo root.
+Outputs: output/sports_owners_political_donations.png / .svg
 """
 
 import os

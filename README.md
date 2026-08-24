@@ -7,7 +7,7 @@ person?**
 
 Every figure from the 2016–20 period is recomputed from 2,798 raw FEC
 contribution records at build time and printed to an audit table. Nothing here
-is estimated; where a figure could not be verified it is labelled as
+is estimated; where a figure could not be verified it is labeled as
 transcribed rather than computed.
 
 ![Political giving by U.S. pro-sports team owners](output/sports_owners_donations_chart.png)
@@ -62,7 +62,7 @@ WNBA and NASCAR. Every figure recomputed from the rows at build time.
 
 **4 Nov 2020 – 16 Oct 2024 — published aggregates, transcribed.** The
 Guardian's analysis of FEC filings, published 5 Nov 2024. No row-level file is
-published, so those figures are transcribed constants and are labelled as such
+published, so those figures are transcribed constants and are labeled as such
 on the chart. The Guardian notes its own totals are *"presumed to be a fraction
 of the actual contributions."*
 
@@ -92,7 +92,7 @@ python scripts/build_leagues_and_owners.py
 ## Method notes
 
 - **Party lean is the recipient committee's classification, not the donor's.**
-  A contribution is categorised by who received it.
+  A contribution is categorized by who received it.
 - **Federal contributions only** — no state or local giving, and no
   undisclosed spending. Dark-money channels are by definition absent.
 - **Owners holding teams in more than one league count toward each**, so league
@@ -101,15 +101,15 @@ python scripts/build_leagues_and_owners.py
 - **"Without Adelson" assumes her giving is ~entirely Republican-leaning** —
   consistent with the reporting, but an assumption rather than a computed
   split, and disclosed on the chart.
-- Colour palette validated in OKLab for colour-vision deficiency: the red/blue
+- Color palette validated in OKLab for color-vision deficiency: the red/blue
   pair that carries the meaning clears the separation floor (worst-case
-  ΔE 10.9 deutan, 11.5 tritan) and all three colours clear 3:1 contrast.
+  ΔE 10.9 deutan, 11.5 tritan) and all three colors clear 3:1 contrast.
 
 ## Tools
 
 Python 3 · pandas · matplotlib · kagglehub
 
-## Licence
+## License
 
 Code is MIT (see [`LICENSE`](LICENSE)). The charts are CC BY 4.0 — reuse them
 with attribution. The underlying FEC records are public domain; the

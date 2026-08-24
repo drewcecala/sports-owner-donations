@@ -1,13 +1,13 @@
 """Reddit / mobile cut of the sports-owner donation concentration story.
 
-Same verified numbers as `build_sports_owners_concentration.py`, rebuilt for a
+Same verified numbers as `build_concentration.py`, rebuilt for a
 phone screen: 4:5 portrait, plain-language labels, no Lorenz curve (it is the
 main comprehension barrier for a general audience), and one idea per section.
 
 Lead finding: between the 2020 and 2024 elections, one owner gave 2.3x more to
 federal politics than every other U.S. pro-sports team owner combined.
 
-Outputs sports_owners_donations/sports_owners_donations_reddit.png (1200x1500).
+Outputs output/sports_owners_donations_reddit.png (1200x1600).
 """
 
 import os
