@@ -207,7 +207,8 @@ fig.text(1.85 / FW, 1.02 / FH,
          "Leagues and the 2016–20 row: FiveThirtyEight “sports-political-donations” (FEC records), pinned to source commit e0c8091 — 2,798 contributions by 158 owners and commissioners.\n"
          "2021–24 row: The Guardian’s FEC analysis, published 5 Nov 2024, covering 4 Nov 2020 – 16 Oct 2024. The reported total is at least $132.1M, so derived values are approximate.\n"
          "“Without” assumes Miriam Adelson’s giving is ~entirely Republican-leaning. Party lean is the recipient committee’s, not the donor’s. Federal contributions only.\n"
-         "Multi-league owners count toward each league, so league totals overlap. The periods use different compilers and are not a continuous series.   Python (pandas, matplotlib) · Drew Cecala, 2026",
+         "Multi-league owners count toward each league, so league totals overlap.\n"
+         "The periods are separate snapshots, not a continuous series.   Python (pandas, matplotlib) · Drew Cecala, 2026",
          fontsize=8.3, color=MUTED, ha="left", va="top", linespacing=1.7)
 
 OUT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output", "sports_owners_donations_chart")
