@@ -147,7 +147,7 @@ for yy, val, money, who, col in [
     hero.barh(yy, val, height=0.46, color=col, zorder=3)
     hero.text(1.8, yy, money, fontsize=18, fontweight="bold",
               ha="left", va="center", color="white", zorder=4)
-hero.text(46, -0.55, f"≈{RATIO:.1f}× more than\neveryone else\nput together",
+hero.text(56, -0.55, f"≈{RATIO:.1f}× more than\neveryone else\nput together",
           fontsize=13, fontweight="bold", ha="left", va="center",
           color=INK, linespacing=1.5)
 
